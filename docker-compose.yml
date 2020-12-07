@@ -1,0 +1,20 @@
+version: "2"
+services:
+  app:
+    container_name: flask_test_app
+    image: flask_test_app:latest
+    links:
+      - db
+    ports:
+      - "5000:5000"
+  db:
+    image: mysql:latest
+    ports:
+      - "32000:3600"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - testing-volume:/var/lib/mysql
+
+volumes:
+  testing-volume:
