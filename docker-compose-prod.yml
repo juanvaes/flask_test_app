@@ -1,0 +1,21 @@
+version: "3"
+services:
+  app:
+    container_name: flask_test_app
+    image: flask_test_app:latest
+    links:
+      - db
+    ports:
+      - "5000:5000"
+    environment:
+      SECRET_KEY: 'AcUvfymBT0snYw'
+      SQLALCHEMY_DATABASE_URI: 'mysql+pymysql://root:root@db:3306/flask_test_app'
+  db:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    volumes:
+      - testing-volume:/var/lib/mysql
+
+volumes:
+  testing-volume:
