@@ -1,6 +1,7 @@
 from flask import jsonify, request
-from flask_test_app.main.main import main_bp
 
+from flask_test_app import db
+from flask_test_app.main.main import main_bp
 from flask_test_app.dbmodels import BookDB, LibraryDB
 
 @main_bp.route('/books', methods=['GET'])
@@ -10,7 +11,15 @@ def get_books():
 
 @main_bp.route('/books', methods=['POST'])
 def create_books():
-    return jsonify({'books': ['book1', 'book2']})
+    lib_id = request.args.get('lib_id', None)
+    title = request.args.get('title', None)
+    author = request.args.get('author', None)
+    if lib_id:
+        lib_id = int(lib_id)
+    b = BookDB(title=title, author=author, library_id=lib_id)
+    db.session.add(b)
+    db.session.commit()
+    return jsonify({'book_id': b.id})
 
 @main_bp.route('/books/<int:book_id>', methods=['GET', 'PUT'])
 def get_item_book(book_id):
@@ -24,8 +33,11 @@ def get_libraries():
 
 @main_bp.route('/libraries', methods=['POST'])
 def create_library():
-    data = request.form
-    return jsonify({'library': ['library1', 'library1']})
+    name = request.args.get('name', None)
+    l = LibraryDB(name=name)
+    db.session.add(l)
+    db.session.commit()
+    return jsonify({'library_id': l.id})
 
 @main_bp.route('/libraries/<int:lib_id>', methods=['GET', 'PUT'])
 def get_item_library(lib_id):
