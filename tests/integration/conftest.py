@@ -52,17 +52,29 @@ def create_books_and_libs(init_db):
     
 
 @pytest.fixture(scope='function')
-def new_user(init_db):
-    # Create User
-    user_name = "Tony Stark"
-    user = UserDB(name=user_name)
-    user.save()
-    assert bool(user.id)
-    del user
-    user = UserDB.query.filter_by(name=user_name).first()
-    assert user is not None
-    assert user.name == user_name
-
+def new_user(client, init_db):
+    name = "Tony Stark"
+    email = 'tony@stark.com'
+    password = "123456"
+    response = client.post('/register', data=dict(
+        name=name,
+        email=email,
+        password=password
+    ))
+    assert response.status_code == 200
+    assert response.json['user_id'] == 1
+    user = UserDB.query.filter_by(email=email).first()
+    assert user.email == email
+    assert user.name == name
+    assert user.password == password
     yield user
-    
 
+@pytest.fixture(scope='function')
+def login_user(client, new_user):
+    response = client.post('/login', data=dict(
+        email=new_user.email,
+        password=new_user.password
+    ))
+    assert response.status_code == 200
+    assert response.json == {'token': 'User logged in'}
+    yield new_user

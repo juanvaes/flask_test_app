@@ -17,25 +17,25 @@ def test_create_user_and_must_exist_in_database(init_db):
     assert user is not None
     assert user.name == user_name
 
-def test_list_user_books_empty(new_user):
+def test_list_user_books_empty(login_user):
     """
     GIVEN an user
     WHEN user's book are requested
     THEN there should be an empty list
     """
-    user = new_user
+    user = login_user
     user_books = user.books
     assert isinstance(user_books, list)
     assert not bool(user_books)
 
-def test_associate_books_to_user(new_user, create_books_and_libs):
+def test_associate_books_to_user(login_user, create_books_and_libs):
     """
     GIVEN an user
     WHEN we associate some books to an user
     THEN we should be able to list those books from the user
     """
-    user_name = new_user.name
-    user = new_user
+    user_name = login_user.name
+    user = login_user
 
     books = BookDB.query.all()
     user.books = books[:2]
@@ -47,6 +47,8 @@ def test_associate_books_to_user(new_user, create_books_and_libs):
     assert len(user.books) == 2
     assert user.books[0].id == books[0].id
     assert user.books[1].id == books[1].id
+
+
 
 
 
