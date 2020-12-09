@@ -2,7 +2,25 @@ from flask import jsonify, request
 
 from flask_test_app import db
 from flask_test_app.main.main import main_bp
-from flask_test_app.dbmodels import BookDB, LibraryDB
+from flask_test_app.dbmodels import BookDB, LibraryDB, UserDB
+
+
+@main_bp.route('/register', methods=['POST'])
+def register_user():
+    data = request.form
+    user = UserDB(name=data['name'], email=data['email'], password=data['password'])
+    user.save()
+    return jsonify({'user_id': user.id})
+
+
+@main_bp.route('/login', methods=['POST'])
+def login_user():
+    data = request.form
+    user = UserDB.query.filter_by(email=data['email']).first()
+    if not user:
+        return jsonify({'token': 'User not found'})
+    return jsonify({'token': 'User logged in'})
+
 
 @main_bp.route('/books', methods=['GET'])
 def get_books():
