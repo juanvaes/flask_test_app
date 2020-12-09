@@ -6,9 +6,12 @@ class UserDB(BaseDB):
 
     name = db.Column(db.String(100), nullable=False)
 
-    def __init__(self, name):
+    #books field from BookDB backref
+
+    def __init__(self, name, books=None):
         self.name = name
-        self.books = []
+        if books:
+            self.books = books
 
     def save(self):
         db.session.add(self)

@@ -28,24 +28,25 @@ def test_list_user_books_empty(new_user):
     assert isinstance(user_books, list)
     assert not bool(user_books)
 
-def test_associate_books_to_user(new_user):
+def test_associate_books_to_user(new_user, create_books_and_libs):
     """
     GIVEN an user
     WHEN we associate some books to an user
     THEN we should be able to list those books from the user
-    
     """
+    user_name = new_user.name
     user = new_user
-    user_name = user.name
 
     books = BookDB.query.all()
-    user.books = books[:1]
+    user.books = books[:2]
     db.session.add(user)
     db.session.commit()
-
+    del user
     user = UserDB.query.filter_by(name=user_name).first()
     assert user is not None
     assert len(user.books) == 2
+    assert user.books[0].id == books[0].id
+    assert user.books[1].id == books[1].id
 
 
 

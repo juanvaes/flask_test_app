@@ -8,6 +8,8 @@ class BookDB(BaseDB):
 
     library_id = db.Column(db.Integer, db.ForeignKey('libraries.id'))
     library = db.relationship('LibraryDB')
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship('UserDB', backref=db.backref('books'))
 
     def __init__(self, title, author, library_id=None):
         self.title = title
