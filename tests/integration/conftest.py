@@ -1,7 +1,7 @@
 import pytest
 
 from flask_test_app import create_app, db
-from flask_test_app.dbmodels import LibraryDB, BookDB
+from flask_test_app.dbmodels import LibraryDB, BookDB, UserDB
 
 @pytest.fixture(scope='module')
 def client():
@@ -18,10 +18,6 @@ def init_db(client):
     db.create_all()
 
     # Create libraries
-    libs = [
-        {'name': 'Libreria Nacional'},
-        {'name': 'Libreria Departamental'}
-    ]
     for l in libs:
         lib = LibraryDB(name=l['name'])
         db.session.add(lib)
@@ -40,4 +36,23 @@ def init_db(client):
     # I added this line, somehow the session was stuck doing the drop.all()
     db.session.commit()
     db.drop_all()
+
+@pytest.fixture(scope='function')
+def new_user(client):
+    # Create Database
+    db.create_all()
+    # Create User
+    user_name = "Tony Stark"
+    user = UserDB(name=user_name)
+    user.save()
+    assert bool(user.id)
+    user = UserDB.query.filter_by(name=user_name).first()
+    assert user is not None
+    assert user.name == user_name
+
+    yield user
+
+    db.session.commit()
+    db.drop_all()
     
+
