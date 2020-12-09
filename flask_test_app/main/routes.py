@@ -11,9 +11,10 @@ def get_books():
 
 @main_bp.route('/books', methods=['POST'])
 def create_books():
-    lib_id = request.args.get('lib_id', None)
-    title = request.args.get('title', None)
-    author = request.args.get('author', None)
+    data = request.form
+    lib_id = data.get('library_id', None)
+    title = data.get('title', None)
+    author = data.get('author', None)
     if lib_id:
         lib_id = int(lib_id)
     b = BookDB(title=title, author=author, library_id=lib_id)
@@ -24,7 +25,7 @@ def create_books():
 @main_bp.route('/books/<int:book_id>', methods=['GET', 'PUT'])
 def get_item_book(book_id):
     book = BookDB.query.filter_by(id=book_id).first()
-    return jsonify({'id': book.json() if book else None })
+    return jsonify({'book': book.json() if book else None })
 
 @main_bp.route('/libraries', methods=['GET'])
 def get_libraries():
@@ -33,7 +34,8 @@ def get_libraries():
 
 @main_bp.route('/libraries', methods=['POST'])
 def create_library():
-    name = request.args.get('name', None)
+    data = request.form
+    name = data.get('name', None)
     l = LibraryDB(name=name)
     db.session.add(l)
     db.session.commit()
@@ -42,5 +44,5 @@ def create_library():
 @main_bp.route('/libraries/<int:lib_id>', methods=['GET', 'PUT'])
 def get_item_library(lib_id):
     library = LibraryDB.query.filter_by(id=lib_id).first()
-    return jsonify({'id': library.json() if library else None })
+    return jsonify({'library': library.json() if library else None })
 

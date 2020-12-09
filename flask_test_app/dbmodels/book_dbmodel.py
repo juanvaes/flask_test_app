@@ -1,5 +1,4 @@
-from flask_test_app import db
-from flask_test_app.dbmodels.base_dbmodel import BaseDB
+from flask_test_app.dbmodels.base_dbmodel import BaseDB, db
 
 class BookDB(BaseDB):
     __tablename__ = 'books'
@@ -10,9 +9,10 @@ class BookDB(BaseDB):
     library_id = db.Column(db.Integer, db.ForeignKey('libraries.id'))
     library = db.relationship('LibraryDB')
 
-    def __init__(self, title, author):
+    def __init__(self, title, author, library_id=None):
         self.title = title
         self.author = author
+        self.library_id = library_id
 
     def json(self):
         return {'title': self.title, 'author': self.author}

@@ -1,5 +1,4 @@
-from flask_test_app import db
-from flask_test_app.dbmodels.base_dbmodel import BaseDB
+from flask_test_app.dbmodels.base_dbmodel import BaseDB, db
 
 class LibraryDB(BaseDB):
     __tablename__ = 'libraries'
